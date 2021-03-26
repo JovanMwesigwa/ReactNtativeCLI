@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, ActivityIndicator, Modal } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, } from 'react-native'
 import { useFormikContext } from 'formik'
 
 // isonbpo.pobox 9399 kampala
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         padding: 10,
         backgroundColor: GlobalStyles.themeColor.color,
-        borderRadius: 20,
+        borderRadius: 15,
         marginVertical: 18,
       },
     text: { 

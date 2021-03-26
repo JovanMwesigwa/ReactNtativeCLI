@@ -26,6 +26,7 @@ const AddComment = ({authToken })  => {
 
 
     const navigation = useNavigation()
+    
     const route = useRoute()
 
     const [ loading, setLoading ] = useState(false);

@@ -20,14 +20,13 @@ const MainTabsNavigation = ({ navigation, authToken }) => {
       <Tab.Navigator
         initialRouteName="Find"
         activeColor={GlobalStyles.themeColor.color}
-        inactiveColor={GlobalStyles.darkFontColor.color}
+        inactiveColor="#7D7D7D"
         labeled={false}
         barStyle={{ 
           backgroundColor: '#fff', 
           elevation: 2, 
           borderTopWidth: 0.8, 
           borderTopColor: "#ddd",
-          paddingBottom: 5
          }}
         >
   

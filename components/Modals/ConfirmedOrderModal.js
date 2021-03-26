@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, View,Modal, TouchableOpacity, Image } from 'react-native'
-import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
+import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps'
 // import MapViewDirections from 'react-native-maps-directions';
 import {  AntDesign, Entypo } from '@expo/vector-icons';
 import { AppText } from '../';
@@ -12,7 +12,21 @@ const destination = {latitude: 37.771707, longitude: -122.4053769};
 const GOOGLE_MAPS_APIKEY = 'AIzaSyABpOgm2KMydgx1yg_p46YZJpT787-tEr8';
 
 
-const ConfirmedOrderModal = ({ cost, visible, onPress}) => {
+const ConfirmedOrderModal = ({ cost, visible, onPress, userLocation}) => {
+
+    const userLatitude = () => {
+        const lat = userLocation["coords"]["latitude"]
+        return lat
+    } 
+
+    const userLongitude = () => {
+        const long = userLocation["coords"]["longitude"]
+        return long
+    }
+
+    if(!userLocation) return <View style={{ flex: 1 }}><AppText>No content</AppText></View>
+
+
     return (
         <Modal visible={visible}>
             <View  style={styles.container}>
@@ -27,12 +41,13 @@ const ConfirmedOrderModal = ({ cost, visible, onPress}) => {
                     provider={PROVIDER_GOOGLE}
                     showsUserLocation={true}
                     initialRegion={{
-                        latitude: 0.315690,
-                        longitude: 32.578110,
-                        latitudeDelta: 0.0722,
-                        longitudeDelta: 0.0001,
+                        latitude: userLatitude(),
+                        longitude: userLongitude(),
+                        latitudeDelta: 0.3952,
+                        longitudeDelta: 0.5951,
                     }}
                 >
+                
                 <Marker
                     coordinate={{
                         latitude: 0.315690,
@@ -44,6 +59,14 @@ const ConfirmedOrderModal = ({ cost, visible, onPress}) => {
                         style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
                     />
                     </Marker>
+
+                {/* <Circle
+                    coordinate={{
+                        latitude: userLatitude(),
+                        longitude: userLongitude(),
+                    }}
+                    style={{ width: 35, height: 35 }}
+                 /> */}
 
                     {/* <MapViewDirections
                         origin={origin}

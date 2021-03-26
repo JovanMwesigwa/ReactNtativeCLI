@@ -2,7 +2,7 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 
 
-import {AddComment, DeliveryConfirm, DeliveryLocationSetup, TrackDeliveryMap, Cart, ChatRoom, Checkout, CompanyList, companyProfile, Find, PostProduct, Messages, ProductDetails, ProductEdit, SearchResults, Stories, SettingsComponent} from '../screens/'
+import {AddComment, DeliveryConfirm, DeliveryLocationSetup, TrackDeliveryMap, Cart, ChatRoom, Checkout, CompanyList, companyProfile, Find, PostProduct, ProductDetails, ProductEdit, SearchResults, Stories, SettingsComponent} from '../screens/'
 import ProfileStackNavigator from './ProfileStackNavigator'
 import HeaderComponent from '../components/header'
 
@@ -53,22 +53,6 @@ const HomeStackNavigator = () => {
                     }}
             />
             <Stack.Screen 
-                    name="Post Product" 
-                    component={PostProduct}
-                    options={{ 
-                    headerShown: false,
-                    headerTitle: () => <HeaderComponent Cart={Cart} />
-                    }}
-            />  
-            <Stack.Screen 
-                    name="AddComment" 
-                    component={AddComment}
-                    options={{ 
-                    headerShown: false,
-                    headerTitle: () => <HeaderComponent Cart={Cart} />
-                    }}
-          /> 
-            <Stack.Screen 
                     name="Search Results" 
                     component={SearchResults}
                     options={{ 
@@ -76,28 +60,7 @@ const HomeStackNavigator = () => {
                     headerTitle: () => <HeaderComponent Cart={Cart} />
                     }}
           /> 
-          <Stack.Screen 
-                    name="Cart" 
-                    component={Cart}
-                    options={{ 
-                    headerShown: false,
-                    headerTitle: () => <HeaderComponent Cart={Cart} />
-                    }}
-         />
-        <Stack.Screen name="Chat" 
-                    component={ChatRoom}
-                    options={{ 
-                        headerShown: false,
-                        headerTitle: () => <HeaderComponent Cart={Cart} />
-                    }} 
-        />
-         <Stack.Screen name="Messages" 
-                component={Messages}
-                options={{ 
-                    headerShown: false,
-                    headerTitle: () => <HeaderComponent Cart={Cart} />
-                }} 
-        />
+
         <Stack.Screen 
                 name="Settings" 
                 component={SettingsComponent}
@@ -109,14 +72,6 @@ const HomeStackNavigator = () => {
         <Stack.Screen 
                 name="Stories" 
                 component={Stories}
-                options={{ 
-                headerShown: false,
-                headerTitle: () => <HeaderComponent Cart={Cart} />
-                }}
-          /> 
-        <Stack.Screen 
-                name="Checkout" 
-                component={Checkout}
                 options={{ 
                 headerShown: false,
                 headerTitle: () => <HeaderComponent Cart={Cart} />

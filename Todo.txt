@@ -6,7 +6,7 @@
     - add loading curtain screen  **** DONE ****
    
  - add location field to the post 
-    - add offline bar
+    - add offline bar **** DONE *****
    
  - add a user short video profile 
    - add gallery feature **** 50% ****
@@ -18,3 +18,6 @@
  2 - Add payments and swipe to the cart(checkout) **** 50% ****
     - add MTN mobile money payments and paypal swipe 
     - show the user location to the seller and buyer using google maps API...
+
+
+    

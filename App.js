@@ -14,9 +14,10 @@ import AuthContextProvider from './context/authentication/Context'
 import UserInfoContextProvider from './context/userInfoContext/UserInfoContextProvider'
 import Geolocation from '@react-native-community/geolocation';
 
-
+// Geolocation.setRNConfiguration(config);
 
 navigator.geolocation = require('@react-native-community/geolocation');
+
 
 
 const App = (props) => {

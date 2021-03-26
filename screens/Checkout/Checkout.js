@@ -1,96 +1,93 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, FlatList, TouchableOpacity,Platform, useColorScheme, PermissionsAndroid } from 'react-native'
-import { useRoute, useNavigation } from '@react-navigation/native'
+import { StyleSheet, Text, View, FlatList,RefreshControl, TouchableOpacity, PermissionsAndroid } from 'react-native'
+import { useRoute } from '@react-navigation/native'
 import { connect } from 'react-redux'
-import Geolocation from '@react-native-community/geolocation';
 
 
-import {AppText, CheckoutItemCard, OtherHeaderComponent, } from '../../components/'
+import {AppText, CheckoutItemCard, ErrorView, OtherHeaderComponent, } from '../../components/'
 import { fetchCartData } from '../../redux/cart/CartRedux';
 import { GlobalStyles } from '../../styles/GlobalStyles'
 import useFetchData from '../../hooks/useFetchData'
+import useFetchUserLocation from '../../hooks/useFetchUserLocation'
+import useRequestLocationPermissions from '../../hooks/useRequestLocationPermissions'
 import ConfirmedOrderModal from '../../components/Modals/ConfirmedOrderModal'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import SplashLoadingScreen from '../SplashLoadingScreen.js/SplashLoadingScreen'
+ 
 
 
 
 
-
-const Checkout = ({ cartData,cartDataErrors }) => {
-
-    const [ confirmedOrder, setConfirmedOrder ] = useState(true)
+const Checkout = ({ cartData, cartDataErrors, cartDataLoading, fetchCartData }) => {
 
     const [ openModal, setOpenModal ] = useState(false)
 
+    const route = useRoute()
+
+    const { token, ID } = route.params;
+
+    useEffect(() => {
+      requestLocationPermission()
+      fetchCartData(token)
+      cartPrice.request()
+    },[])
+
+    const close = () => setOpenModal(false)
+       
+    const cartPrice = useFetchData(token, `api/cart_cost/${ID}/`)
+
+    const confirmOrderFunc = useFetchData(token, `api/confirm_order/${ID}/`)
+
+    const { fetchCurrentLocation, userLocation } = useFetchUserLocation()
+
+    const requestLocationPermission = useRequestLocationPermissions(fetchCurrentLocation)
+
+
     const open = () => {
-      if(confirmedOrder) {
+      if(cartData.confirmed) {
         setOpenModal(true)
       }else{
         setOpenModal(false)
       }
     }
 
-    const close = () => setOpenModal(false)
+    // if (cartDataLoading) return <SplashLoadingScreen />
+
+    if (cartDataErrors) return <ErrorView onPress={refreshOrder} error={cartDataErrors} />
     
-    const route = useRoute()
+    const refreshOrder = () => {
+      requestLocationPermission()
+      fetchCartData(token)
+      cartPrice.request()
+    }
 
-    const navigation = useNavigation()
+    const fetchConfirmOrder = () => {
+      confirmOrderFunc.request()
+      fetchCartData(token)
+    }
 
-    const { token, ID } = route.params;
-
-    const cartPrice = useFetchData(token, `api/cart_cost/${ID}/`)
-
-    const requestLocationPermission = async () => {
-      // Refactor this code into a custom hook
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: "Location Permission",
-            message:
-              "Bookabie needs access to your location " +
-              "so you can take awesome orders.",
-            buttonNeutral: "Ask Me Later",
-            buttonNegative: "Cancel",
-            buttonPositive: "OK"
-          }
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("You can access the location");
-        } else {
-          console.log("Location permission denied");
-        }
-      } catch (err) {
-        console.warn(err);
-      }
-    };
-
-    // const checkPlatform = () => {
-    //   if(Platform.OS === 'android') requestLocationPermission()
-    //   Geolocation.requestAuthorization()
-    // }
-
-  useEffect(() => {
-    requestLocationPermission()
-    fetchCartData(token)
-    cartPrice.request()
-  },[])
+    const refreshControl = <RefreshControl 
+      refreshing={cartDataLoading}
+      onRefresh={refreshOrder}
+    />
 
     return (
         <>
         <OtherHeaderComponent name="Checkout" />
             <View style={styles.container}>
+              <View style={{ flex: 1 }}>
                 <FlatList
                     ListHeaderComponent={
                       <TouchableOpacity style={{ marginVertical: 20 }}>
                           <AppText 
                             paddingHorizontal={8}
                             color={GlobalStyles.blue.color} 
-                            >Current Location</AppText>
+                            >...</AppText>
                       </TouchableOpacity>
                     }
                     data={cartData.product}
                     showsVerticalScrollIndicator={false}
+                    refreshControl={refreshControl}
                     ItemSeparatorComponent={() => <View style={{ height: 1, width: '100%', backgroundColor: "#ddd" }} />}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({item}) => (
@@ -98,6 +95,7 @@ const Checkout = ({ cartData,cartDataErrors }) => {
                           <CheckoutItemCard item={item} token={token} />
                       </View>
                     )}
+                    
                     ListFooterComponent={
                       <>
                         <View  style={styles.priceContainer}>
@@ -109,17 +107,22 @@ const Checkout = ({ cartData,cartDataErrors }) => {
                             > Shs - {cartPrice.data.cost}</AppText>
                         </View>
                         {
-                          !confirmedOrder &&
-                          <View style={styles.pricingBtns}>
-                              <TouchableOpacity style={styles.checkoutBtn} onPress={() => navigation.navigate('DeliveryLocationSetup',{token: token, ID: ID})}>
-                                <Text style={styles.checkoutText}>Confirm Order</Text>
-                              </TouchableOpacity>
-                          </View>
+                          !cartDataLoading &&
+                          <>
+                            {
+                              !cartData.confirmed &&
+                              <View style={styles.pricingBtns}>
+                                  <TouchableOpacity style={styles.checkoutBtn} onPress={fetchConfirmOrder}>
+                                    <Text style={styles.checkoutText}>Confirm Order</Text>
+                                  </TouchableOpacity>
+                              </View>
+                            }
+                          </>
                         }
-                        
                       </>
                     }
                 />
+                </View>
                 {
                     cartDataErrors ? 
                     <View style={styles.errorStyles}>
@@ -129,8 +132,9 @@ const Checkout = ({ cartData,cartDataErrors }) => {
                 }
 
             </View>
+            <View >
             {
-              confirmedOrder && 
+              cartData.confirmed && 
               <TouchableWithoutFeedback onPress={() => open()}>
                 <View style={styles.bottomLink}>
                   <AppText fontSize={15} color="#E9F0F0" fontWeight="bold">
@@ -147,7 +151,13 @@ const Checkout = ({ cartData,cartDataErrors }) => {
                 </View>
               </TouchableWithoutFeedback>
             }
-            <ConfirmedOrderModal visible={openModal} onPress={close} cost={cartPrice.data.cost} />
+            <ConfirmedOrderModal 
+              visible={openModal} 
+              onPress={close} 
+              cost={cartPrice.data.cost}
+              userLocation={userLocation}
+            />
+          </View>
         </>
     )
 }
@@ -155,19 +165,21 @@ const Checkout = ({ cartData,cartDataErrors }) => {
 
 const styles = StyleSheet.create({
   bottomLink: {
+    justifyContent: 'flex-end',
     backgroundColor: "#137BD1",
     padding: 18,
   },  
     container: {
         backgroundColor: "#fff",
         flex: 1,
+        justifyContent: 'space-between',
         paddingHorizontal: 15,
     },
     checkoutBtn: {
       padding: 8,
       backgroundColor: GlobalStyles.themeColor.color,
       margin: 8,
-      borderRadius: 25,
+      borderRadius: 15,
     },
     checkoutText: {
       color: "#fff",
@@ -187,7 +199,6 @@ const styles = StyleSheet.create({
     },
     pricingBtns: { 
       backgroundColor: '#fff',
-      paddingVertical: 20,
     },
 })
 

@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: GlobalStyles.themeColor.color,
     margin: 8,
-    borderRadius: 5,
+    borderRadius: 15,
   },
   cancelBtn: {
     padding: 8,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor:  GlobalStyles.themeColor.color,
     margin: 8,
-    borderRadius: 5
+    borderRadius: 15
   },
   checkoutText: {
     color: "#fff",

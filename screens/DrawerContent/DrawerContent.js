@@ -47,6 +47,7 @@ const DrawerContent = ({navigation, authToken, signOut, userProfile, fetchUser})
                                 <Caption style={styles.caption}>{userProfile.profile.location}</Caption>
                             </View>
                         </View>
+                        
                         <View style={styles.row}>
                             <View style={styles.section}>
                                 <Paragraph style={[styles.paragraph,styles.caption]}>{userProfile.profile.followers.length}</Paragraph>

@@ -1,6 +1,5 @@
 package com.jovanmwesigwabalambirwa.sellandbuybeyond;
 
-import com.reactnativecommunity.geolocation.GeolocationPackage;
 import android.app.Application;
 import android.content.Context;
 import android.net.Uri;

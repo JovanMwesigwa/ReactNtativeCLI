@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 
 import DrawerContent  from '../screens/DrawerContent/DrawerContent'
 import MainTabsNavigation from './MainTabsNavigation';
-
+import {AddComment, Cart, ChatRoom, Checkout, Messages, PostProduct } from '../screens/'
 
 
 
@@ -28,6 +28,12 @@ const NavigationComponent = ({ navigation,  }) => {
         }}
     >
       <Drawer.Screen name="HomeTab" component={MainTabsNavigation} />
+      <Drawer.Screen name="Messages" component={Messages} />
+      <Drawer.Screen name="Chat" component={ChatRoom} />
+      <Drawer.Screen name="Cart" component={Cart} />
+      <Drawer.Screen name="Checkout" component={Checkout} />
+      <Drawer.Screen name="Post Product" component={PostProduct} />
+      <Drawer.Screen name="AddComment" component={AddComment} />
     </Drawer.Navigator>
    </NavigationContainer>
    )

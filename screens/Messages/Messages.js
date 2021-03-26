@@ -6,12 +6,10 @@ import { AntDesign } from '@expo/vector-icons';
 import { connect } from 'react-redux'
 
 
-
 import {MessagesItem, SentMessagesItem} from '../../components/';
 import { GlobalStyles } from '../../styles/GlobalStyles';
 import useAuthUser from '../../hooks/useAuthUser'
 import useFetchData from '../../hooks/useFetchData'
-
 
 
 const url = `api/rooms/`
