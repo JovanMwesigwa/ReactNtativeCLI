@@ -1,7 +1,12 @@
 import React from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import { GlobalStyles } from '../styles/GlobalStyles'
 import { useNavigation} from '@react-navigation/native'
+import {  AntDesign,  } from '@expo/vector-icons';
+
+
+import { AppText } from '.'
+import { GlobalStyles } from '../styles/GlobalStyles'
+import useVerifyNavigation from '../hooks/useVerifyNavigation';
 
 
 
@@ -9,78 +14,62 @@ const CompanyCard = ({  item, authUserName }) => {
 
   const navigation = useNavigation();
 
+  const navigateToProfile = (item) => {
+    if(authUserName === item.user) {
+      navigation.navigate("Profile", { ID: item.id, })
+    }else{
+      navigation.navigate("CompanyProfile", { ID: item.id, }) 
+    }
+  }
 
 const { container } = styles
  return(
-  <View style={container}>
       <View style={styles.cardContainer}>
 
-      { authUserName === item.user ? 
-          <TouchableOpacity onPress={() => navigation.navigate("Profile", { ID: item.id, })}>
-            <Image source={{ uri: item.profile_pic }} style={GlobalStyles.largeRoundedPictContainer} />
-          </TouchableOpacity> :
-
-
-          <TouchableOpacity onPress={() => navigation.navigate("CompanyProfile", { ID: item.id, })}>
+          <TouchableOpacity onPress={() => navigateToProfile(item)}>
             <Image source={{ uri: item.profile_pic }} style={GlobalStyles.largeRoundedPictContainer} />
           </TouchableOpacity> 
 
-      }
+            <View style={styles.middle}>
 
-
-            <View style={{ flex: 2, paddingLeft: 20, justifyContent: 'center' }}>
-            { authUserName === item.user ? 
-                <TouchableOpacity onPress={() => navigation.navigate("Profile", 
-                { ID: item.id, })}>
-                  <Text style={{...GlobalStyles.text, fontWeight: '700'}}>{item.user}</Text>
-                </TouchableOpacity> :
-
-                <TouchableOpacity onPress={() => navigation.navigate("CompanyProfile", 
-                { ID: item.id, })}>
-
-                  <Text style={{...GlobalStyles.text, fontWeight: '700'}}>{item.user}</Text>
+                <TouchableOpacity onPress={() => navigateToProfile(item)} style={styles.account}>
+                    <Text style={{...GlobalStyles.text, fontWeight: '700', marginRight: 2}}>{item.user}</Text>
+                    {item.verified && <AntDesign name="star" size={10} color={GlobalStyles.darkFontColor.color} />}
                 </TouchableOpacity>
-            
-            }
-                <Text style={GlobalStyles.mutedText}>{item.profile_type.name}</Text>
-                <Text style={{ color: GlobalStyles.greenColor.color, fontWeight: "700" }}>{item.location}</Text>
-                <Text style={{ fontSize: 13,color: '#2C3335', fontWeight: "bold", color: "gold", fontWeight: 'bold'}}>Open</Text>
+
+                <View>
+                  <AppText {...GlobalStyles.mutedText}>{item.profile_type}</AppText>
+                  <AppText {...styles.locationStyles}>{item.location}</AppText>
+                  <AppText {...styles.statusStyles}>Open</AppText>
+                </View>
+                
             </View>
       </View>
-  </View>
   )
 }
 
 
 const styles = StyleSheet.create({
-container: {
-    
+account: {
+    flexDirection: 'row',
 },
 cardContainer: {
     backgroundColor: 'white',
     flexDirection: 'row',
-    width: '100%',
-    // flex: 1,
     alignItems: 'center',
-    borderRadius: 5,
     borderTopWidth: 0.8,
     borderTopColor: "#ddd",
     padding: 18,
-    paddingLeft: 24,
-    paddingRight: 24,
-    // paddingTop: 24,
-    // paddingBottom: 24,
-    // marginLeft: 24,
-    // marginRight: 24,
-    // height: 95,
-    // width: "85%",
-    // borderRadius: 5,
-    // borderTopWidth: 0.8,
-    // borderTopColor: "#ddd",
   },
   mainText: {
+      flex: 1,
       fontSize: 15,
       fontWeight: '600'
+  },
+  middle: { 
+    flex: 2, 
+    marginLeft: 20, 
+    justifyContent: 'center' 
   },
   secondaryText: {
     color: '#777E8B'
@@ -88,6 +77,18 @@ cardContainer: {
   cartBtnContainer: {
       padding: 5,
       paddingLeft: 0,
+  },
+  locationStyles: { 
+    flex: 1,
+    color: GlobalStyles.greenColor.color, 
+    fontWeight: "700" 
+  },
+  statusStyles: {
+    flex: 1, 
+    fontSize: 13,
+    color: '#2C3335', 
+    fontWeight: "bold", 
+    color: "gold", 
   }
 })
 export default CompanyCard

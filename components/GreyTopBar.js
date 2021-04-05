@@ -1,6 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import { MaterialCommunityIcons,MaterialIcons, Ionicons} from '@expo/vector-icons';
+import { StyleSheet, View} from 'react-native'
 
 
 import { GlobalStyles } from '../styles/GlobalStyles'
@@ -26,7 +25,7 @@ const styles = StyleSheet.create({
     feedContainer: {
         paddingHorizontal: 25,
         paddingVertical: 8,
-        backgroundColor: '#ddd',
+        backgroundColor: '#e6e5e5',
         flexDirection: 'row',
         alignItems: 'center', 
       },

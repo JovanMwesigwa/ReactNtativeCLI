@@ -4,8 +4,6 @@ import { AntDesign,} from '@expo/vector-icons';
 import moment from 'moment';
 
 
-import { GlobalStyles } from '../../styles/GlobalStyles';
-
 
 const ChatMessageComponent = ({ item, bgColor }) => {
     return (
@@ -40,6 +38,7 @@ const styles = StyleSheet.create({
     },
     textStyle: {
         fontSize: 16,
+        color: '#272323'
     }
 })
 

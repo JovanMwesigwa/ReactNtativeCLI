@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, FlatList,RefreshControl, TouchableOpacity, PermissionsAndroid } from 'react-native'
 import { useRoute } from '@react-navigation/native'
 import { connect } from 'react-redux'
+import axios from 'axios'
 
 
+import { APIROOTURL } from '../../ApiRootURL/ApiRootUrl'
 import {AppText, CheckoutItemCard, ErrorView, OtherHeaderComponent, } from '../../components/'
 import { fetchCartData } from '../../redux/cart/CartRedux';
 import { GlobalStyles } from '../../styles/GlobalStyles'
@@ -12,7 +14,6 @@ import useFetchUserLocation from '../../hooks/useFetchUserLocation'
 import useRequestLocationPermissions from '../../hooks/useRequestLocationPermissions'
 import ConfirmedOrderModal from '../../components/Modals/ConfirmedOrderModal'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
-import SplashLoadingScreen from '../SplashLoadingScreen.js/SplashLoadingScreen'
  
 
 
@@ -42,6 +43,32 @@ const Checkout = ({ cartData, cartDataErrors, cartDataLoading, fetchCartData }) 
 
     const requestLocationPermission = useRequestLocationPermissions(fetchCurrentLocation)
 
+    const submitOrder = async () => {
+      const data = {
+          buyer: ID,
+          cart_info: cartData.id,
+          latitude: userLocation["coords"]["latitude"],
+          longititude: userLocation["coords"]["longitude"],
+          cost: cartPrice.data.cost
+        }
+        
+          await axios.post(`${APIROOTURL}/api/create_order/`, data, {
+            headers: {
+                'Authorization': `Token ${token}`,
+                data: data
+              }
+            })
+            .then(res => {
+                // console.log(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        
+        }
+
+
+
 
     const open = () => {
       if(cartData.confirmed) {
@@ -62,8 +89,10 @@ const Checkout = ({ cartData, cartDataErrors, cartDataLoading, fetchCartData }) 
     }
 
     const fetchConfirmOrder = () => {
+      submitOrder()
       confirmOrderFunc.request()
       fetchCartData(token)
+      
     }
 
     const refreshControl = <RefreshControl 
@@ -78,7 +107,7 @@ const Checkout = ({ cartData, cartDataErrors, cartDataLoading, fetchCartData }) 
               <View style={{ flex: 1 }}>
                 <FlatList
                     ListHeaderComponent={
-                      <TouchableOpacity style={{ marginVertical: 20 }}>
+                      <TouchableOpacity style={{ marginVertical: 20, marginLeft: 8 }}>
                           <AppText 
                             paddingHorizontal={8}
                             color={GlobalStyles.blue.color} 
@@ -91,16 +120,17 @@ const Checkout = ({ cartData, cartDataErrors, cartDataLoading, fetchCartData }) 
                     ItemSeparatorComponent={() => <View style={{ height: 1, width: '100%', backgroundColor: "#ddd" }} />}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({item}) => (
-                      <View >
+                      <View style={{ marginHorizontal: 5 }}>
                           <CheckoutItemCard item={item} token={token} />
                       </View>
                     )}
                     
-                    ListFooterComponent={
-                      <>
+                    
+                />
+
+                      <View style={styles.btnInfo}>
                         <View  style={styles.priceContainer}>
                           <AppText 
-                            paddingHorizontal={8}
                             fontSize={18} 
                             fontWeight='bold'
                             alignSelf="flex-end"
@@ -119,9 +149,7 @@ const Checkout = ({ cartData, cartDataErrors, cartDataLoading, fetchCartData }) 
                             }
                           </>
                         }
-                      </>
-                    }
-                />
+                      </View>
                 </View>
                 {
                     cartDataErrors ? 
@@ -167,19 +195,21 @@ const styles = StyleSheet.create({
   bottomLink: {
     justifyContent: 'flex-end',
     backgroundColor: "#137BD1",
-    padding: 18,
+    padding: 10,
   },  
+  btnInfo: {
+
+  },
     container: {
         backgroundColor: "#fff",
         flex: 1,
         justifyContent: 'space-between',
-        paddingHorizontal: 15,
     },
     checkoutBtn: {
       padding: 8,
       backgroundColor: GlobalStyles.themeColor.color,
       margin: 8,
-      borderRadius: 15,
+      borderRadius: 8,
     },
     checkoutText: {
       color: "#fff",
@@ -193,9 +223,9 @@ const styles = StyleSheet.create({
     },
     priceContainer: {
       paddingVertical: 20,
+      marginHorizontal: 8,
       borderTopWidth: 0.5,
       borderTopColor: "#ddd",
-      marginVertical: 20
     },
     pricingBtns: { 
       backgroundColor: '#fff',

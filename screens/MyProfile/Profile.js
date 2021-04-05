@@ -1,5 +1,5 @@
 import React, {  useEffect } from 'react'
-import { View, StyleSheet, Text, Dimensions, Image, ImageBackground, TouchableOpacity, ActivityIndicator, StatusBar, FlatList, RefreshControl } from 'react-native'
+import { View, StyleSheet, Text, Dimensions, Image, ImageBackground, TouchableOpacity, StatusBar, FlatList, RefreshControl } from 'react-native'
 import {  Entypo, AntDesign} from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { Caption, Paragraph,  } from 'react-native-paper';
@@ -9,7 +9,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 
 
-import {AppButton, ApploadingComponent, ErrorView, ProductCard, ProfileHeader, LoadMoreComponent, TopProduct, } from '../../components/';
+import {AppButton, ErrorView, ProductCard, ProfileHeader, LoadMoreComponent, TopProduct, } from '../../components/';
 import { GlobalStyles } from '../../styles/GlobalStyles'
 import useFetchData from '../../hooks/useFetchData'
 import { fetchUserProfile } from '../../redux/userProfile/userProfileRedux';
@@ -28,27 +28,34 @@ const Profile = ({  navigation, authToken, userProfile, fetchUserProfile }) => {
   
   const topPosts = useFetchData(token, `api/topproducts/${userProfile.profile.id}/`)
 
+  const followersData = useFetchData(token, `api/following/${userProfile.profile.id}/`)
+
+  const followingData = useFetchData(token, `api/followers/${userProfile.profile.id}/`)
+
+
   useEffect(() => {
     fetchUserProfile(token)
+    followersData.request()
+    followingData.request()
     topPosts.request()
   },[])
 
   
   const fastRefresh = () => {
     fetchUserProfile(token)
+    followersData.request()
+    followingData.request()
     topPosts.request()
   }
 
   const reload = () => {
     fetchUserProfile(token)
+    followersData.request()
+    followingData.request()
     topPosts.request()
   }
 
-
-  if (userProfile.loading) return <ApploadingComponent />
-
   if (userProfile.error) return <ErrorView onPress={reload} error={userProfile.error} />
-
 
 
   const renderFooter = () => <LoadMoreComponent title="my" onPress={() => postsData.request()} />
@@ -63,7 +70,6 @@ const refreshControl = <RefreshControl
  return(
 
   <>
-      <StatusBar backgroundColor="#ddd" barStyle='dark-content' />
     <ProfileHeader profileName={userProfile.profile.user} />
     <FlatList
   
@@ -71,7 +77,6 @@ const refreshControl = <RefreshControl
         <>
           <View style={styles.container}>
 
-         
           <ImageBackground style={styles.coverImageHeader} source={{uri: userProfile.profile.cover_photo}}>
             <View style={styles.child}>
 
@@ -90,7 +95,7 @@ const refreshControl = <RefreshControl
                     <Text style={{...styles.mainText, fontSize: 15}}>{userProfile.profile.user}</Text>
                     <AntDesign name="star" size={10} color={GlobalStyles.darkFontColor.color} />
                   </View>
-                  <Text style={styles.secondaryText}>{userProfile.profile.profile_type.name}</Text>
+                  <Text style={styles.secondaryText}>{userProfile.profile.profile_type}</Text>
                 </View>
 
                 <TouchableOpacity style={styles.cartBtnContainer} onPress={() => {
@@ -129,8 +134,19 @@ const refreshControl = <RefreshControl
               </View>
               <View style={styles.section}>
                   <MaterialCommunityIcons name="account-group" size={18} color="#FF5A09" />
-                  <Paragraph style={[styles.paragraph,styles.caption]}>{userProfile.profile.followers.length}</Paragraph>
+
+                  {
+                      !followingData.errors && 
+                        <Paragraph style={[styles.paragraph,styles.caption]}>{followingData.loading ? '..' : followingData.data}</Paragraph>
+                    }
+                  <Caption style={{...styles.caption, paddingLeft: 2}}>following</Caption>
+
+                    {
+                      !followersData.errors && 
+                        <Paragraph style={[styles.paragraph,styles.caption]}>{followersData.loading ? '..' : followersData.data}</Paragraph>
+                    }
                   <Caption style={{...styles.caption, paddingLeft: 2}}>followers</Caption>
+
               </View>
             </View>
 
@@ -138,24 +154,19 @@ const refreshControl = <RefreshControl
 
             </View>
             
-          
               <Tabs 
-                tabBarUnderlineStyle={{borderBottomWidth:4, borderBottomColor: GlobalStyles.themeColor.color}}
-                tabContainerStyle={{
-                  elevation: 0,
-                  shadowOpacity: 0,
-                  borderBottomWidth: 1,
-                  borderBottomColor: "#ddd"
-                }}
+                tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
+                tabContainerStyle={styles.tabContainerStyle}
               >
 
-                <Tab heading="Top Products"
-                 tabStyle={{backgroundColor: 'white'}} 
-                 textStyle={{color: '#777'}} 
-                 activeTabStyle={{backgroundColor: 'white'}} 
-                 activeTextStyle={{color: GlobalStyles.themeColor.color, fontWeight: '700'}}
+                <Tab 
+                  heading="Top Products"
+                  tabStyle={styles.tabStyle} 
+                  textStyle={styles.tabTextStyle} 
+                  activeTabStyle={styles.activeTabStyle} 
+                  activeTextStyle={styles.activeTextStyle}
                 >
-                  <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  <View style={styles.topProductContainer}>
                   
                     {
                       topPosts.data.map(topPost => (
@@ -179,11 +190,12 @@ const refreshControl = <RefreshControl
   
                   </Tab>
 
-                  <Tab heading="About Us" 
-                    tabStyle={{backgroundColor: 'white'}} 
-                    textStyle={{color: '#777'}} 
-                    activeTabStyle={{backgroundColor: 'white'}} 
-                    activeTextStyle={{color: GlobalStyles.themeColor.color, fontWeight: '700'}}
+                  <Tab 
+                    heading="About Us" 
+                    tabStyle={styles.tabStyle} 
+                    textStyle={styles.tabTextStyle} 
+                    activeTabStyle={styles.activeTabStyle} 
+                    activeTextStyle={styles.activeTextStyle}
                   >
                     
                       <View style={{ flex: 1, marginVertical: 8, paddingHorizontal: 20 }}>
@@ -193,20 +205,20 @@ const refreshControl = <RefreshControl
                     </View>
                   </Tab>
 
-                  <Tab heading="Gallery"
-                    tabStyle={{backgroundColor: 'white'}} 
-                    textStyle={{color: '#777'}} 
-                    activeTabStyle={{backgroundColor: 'white'}} 
-                    activeTextStyle={{color: GlobalStyles.themeColor.color, fontWeight: '700'}}
+                  <Tab 
+                    heading="Gallery"
+                    tabStyle={styles.tabStyle} 
+                    textStyle={styles.tabTextStyle} 
+                    activeTabStyle={styles.activeTabStyle} 
+                    activeTextStyle={styles.activeTextStyle}
                   >
-                  <View style={{ padding: 2, flexDirection: 'row', flexWrap: 'wrap' }}>
+                    <View style={{ padding: 2, flexDirection: 'row', flexWrap: 'wrap' }}>
                         <View style={{ backgroundColor: 'grey', width: 113, height: 100, margin: 2 }} />
                         <View style={{ backgroundColor: 'brown', width: 113, height: 100, margin: 2 }} />
                         <View style={{ backgroundColor: 'black', width: 113, height: 100, margin: 2 }} />
                         <View style={{ backgroundColor: 'black', width: 113, height: 100, margin: 2 }} />
                         <View style={{ backgroundColor: 'black', width: 113, height: 100, margin: 2 }} />
                         <View style={{ backgroundColor: 'black', width: 113, height: 100, margin: 2 }} />
-
                     </View>
                   
                   </Tab>
@@ -234,6 +246,8 @@ const refreshControl = <RefreshControl
 }
 
 const styles = StyleSheet.create({
+  activeTabStyle: {backgroundColor: 'white'},
+  activeTextStyle: {color: GlobalStyles.themeColor.color, fontWeight: '700'},
   accountContainer: { 
     height: 80,
     paddingHorizontal: 20,
@@ -364,11 +378,24 @@ loadMoreBtn: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)'
   },
+  tabBarUnderlineStyle: {
+    borderBottomWidth:4, 
+    borderBottomColor: GlobalStyles.themeColor.color
+  },
+  tabContainerStyle: {
+    elevation: 0,
+    shadowOpacity: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd"
+  },
+  tabStyle: {backgroundColor: 'white'},
+  tabTextStyle: {color: '#777'},
   topIcons: {
     flexDirection: "row",
     justifyContent: 'space-between',
     margin: 10
   },
+  topProductContainer: { alignItems: 'center', justifyContent: 'center' },
   profilephoto: {
     position: 'absolute',
     bottom: 45,

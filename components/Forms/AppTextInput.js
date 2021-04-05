@@ -7,12 +7,12 @@ import AppText from '../AppText'
 import { GlobalStyles } from '../../styles/GlobalStyles'
 
 
-const AppTextInput = ({ name, placeholder, value=null, placeholderColor="#777" ,isInline, title, icon, ...otherProps}) => {
+const AppTextInput = ({ name, placeholder, value=null, flexAll, placeholderColor="#777" ,isInline, title, icon, ...otherProps}) => {
     const {handleChange, setFieldTouched, touched, errors } = useFormikContext()
     if(!errors) return null
     return (
         <>
-            <View>
+            <View style={{ flex: flexAll ? 1 : 0 }}>
                 {
                     title &&
                     <AppText fontSize={16} color={GlobalStyles.blue.color}>{title}</AppText>
@@ -44,13 +44,13 @@ const AppTextInput = ({ name, placeholder, value=null, placeholderColor="#777" ,
 
 const styles = StyleSheet.create({
     inputContainer: {
-        marginVertical: 10,
+        marginVertical: 15,
         fontSize: 16,
         padding: 10,
         paddingLeft: 30,
-        borderRadius: 12,
-        borderWidth: 0.3,
-        borderColor: '#7B8788',
+        borderColor: "#ddd",
+        borderRadius: 8,
+        borderBottomWidth: 0.9,
         marginBottom: 18,
         flex: 1
       },
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
       },
       iconStyles: {
         position: 'absolute',
-        alignSelf: 'flex-start',
+        top: 30,
         left: 10,
         bottom: 33
     }

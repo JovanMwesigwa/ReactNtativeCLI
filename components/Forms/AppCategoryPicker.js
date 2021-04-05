@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         borderColor: "#ddd",
-        borderRadius: 12,
+        borderRadius: 8,
         borderWidth: 0.9,
         flexDirection: 'row',
         paddingHorizontal: 12,

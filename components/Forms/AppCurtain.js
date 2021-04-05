@@ -5,13 +5,15 @@ import { GlobalStyles } from '../../styles/GlobalStyles'
 const AppCurtain = ({ loading }) => {
     if(!loading) return null
     return (
-        <View style={styles.curtain} >
-            <ActivityIndicator 
+        <>
+            <View style={styles.curtain} />
+        <ActivityIndicator 
             color={GlobalStyles.themeColor.color} 
             size={35}
             style={styles.loader}
+            animating
             />
-      </View>
+      </>
     )
 }
 
@@ -19,7 +21,7 @@ const styles = StyleSheet.create({
     curtain: { 
         alignItems: 'center',
         backgroundColor: '#fff', 
-        height: 600, 
+        height: '100%', 
         position: 'absolute',
         top: 0,
         right: 0,
@@ -31,9 +33,10 @@ const styles = StyleSheet.create({
     loader: {
         position: 'absolute',
         top: '50%',
-        bottom: '50%',
         left: '50%',
-        right: '50%'
+        right: '50%',
+        bottom: '50%',
+        zIndex: 99,
     }
 })
 

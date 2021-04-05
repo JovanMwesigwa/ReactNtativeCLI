@@ -40,9 +40,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         padding: 10,
         paddingLeft: 40,
-        borderRadius: 25,
-        borderWidth: 0.3,
-        borderColor: '#7B8788',
+        borderRadius: 8,
+        borderWidth: 0.2,
+        borderColor: 'black',
         marginBottom: 18,
         flex: 1
       },

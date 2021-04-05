@@ -8,7 +8,7 @@ import * as Yup from 'yup'
 
 
 
-import { AppTextInput, AppForm, SubmitButton, PostProductHeader} from '../../components/'
+import { AppTextInput, AppForm, SubmitButton, PostProductHeader, AppCurtain} from '../../components/'
 import { APIROOTURL } from '../../ApiRootURL/ApiRootUrl';
 import { hotReloadPosts } from '../../redux/posts/postsRedux';
 import useAuthUser from '../../hooks/useAuthUser'
@@ -66,7 +66,7 @@ const AddComment = ({authToken })  => {
     return (
         <>
             <StatusBar backgroundColor="#ddd" barStyle='dark-content' />
-            <PostProductHeader />
+            <PostProductHeader onPress={() => navigation.goBack()} />
         <ScrollView style={styles.container} onPress={() => Keyboard.dismiss()}>
             
             <Text style={{ color: '#777', fontSize: 12, padding: 15 }}>Your comment:</Text>
@@ -87,13 +87,14 @@ const AddComment = ({authToken })  => {
                                 multiline
                             />
                         </View>
-                    <View style={styles.input}>
-                        <SubmitButton title="Send" loading={loading} />
-                    </View>
+                        <View style={styles.input}>
+                            <SubmitButton title="Send" loading={loading} />
+                        </View>
                     </View>
                 </AppForm>
 
         </ScrollView>
+        <AppCurtain loading={loading} />
     </>
     )
 }

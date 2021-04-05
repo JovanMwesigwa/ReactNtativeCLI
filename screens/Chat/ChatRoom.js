@@ -17,7 +17,6 @@ import useFetchData from '../../hooks/useFetchData'
 
 
 
-
 const validationSchema = Yup.object().shape({
   description: Yup.string().required().label("Message")
 })
@@ -79,19 +78,23 @@ const ChatRoom = ({ navigation,  authToken }) => {
 
 const { container } = styles
  return(
-  <View style={container}>
+   <>
     <StatusBar backgroundColor="#ddd" barStyle='dark-content' />
+  <View style={container}>
+    
         <View style={{ elevation: 2, shadowOpacity: 3, borderBottomColor: "#ddd", borderBottomWidth: 0.5 }}>
             <View style={{...styles.headerContainer }}>
               <TouchableOpacity onPress={() => navigation.goBack()} >
-                <AntDesign name="arrowleft" size={20} color="black" />
+                <AntDesign name="arrowleft" size={20} color="#272323" />
               </TouchableOpacity>
               <View style={{ alignItems: 'center', paddingHorizontal: 12 }}>
                 <Image source={{ uri: userToData.data.profile_pic }} style={styles.userProfileStyles} />
-                <Text style={{ fontSize: 8, textAlign: 'center' }}>{userToData.data.user}</Text>
+                <Text style={{ fontSize: 8, textAlign: 'center', color: "#272323" }}>{userToData.data.user}</Text>
               </View>
             </View>
         </View>
+
+        <View style={{ flex: 1 }}>
           <FlatList 
             data={chatRoom.data.results}
             showsVerticalScrollIndicator={false}
@@ -111,26 +114,32 @@ const { container } = styles
             )}
             keyExtractor={item => (item.id.toString())}
           />
-          
+        </View>
+
+        <View style={styles.inputContainer}>
           <AppForm
             initialValues={{ room: ID, description: "", message_to: item.reciever,}}
             validationSchema={validationSchema}
             onSubmit={(values) => sendMessage(values)}
           >
-            <View style={styles.inputContainer}>
+            
                   <AppTextInput
                     name="description"
                     placeholder="Enter Message"
                     placeholderColor="#ddd"
                     multiline
                     isInline
+                    flexAll
                   />
-                  <TouchableOpacity style={styles.sendBtn}>
-                      <IconButton title="GO" icon="paper-plane-o" />
-                  </TouchableOpacity>
-            </View>
+                  <View>
+                    <TouchableOpacity style={styles.sendBtn}>
+                        <IconButton title="GO" icon="paper-plane-o" />
+                    </TouchableOpacity>
+                  </View>
           </AppForm>
+        </View>
     </View>
+    </>
   )
 }
 
@@ -138,8 +147,7 @@ const { container } = styles
 const styles = StyleSheet.create({
   container: {
    flex: 1,
-   backgroundColor: 'grey',
-  //  justifyContent: 'space-between',
+   backgroundColor: '#cacaca',
   },
   textInput: {
     borderWidth: 0,
@@ -204,13 +212,13 @@ const styles = StyleSheet.create({
     height: 50
   },
   inputContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderTopWidth: 0.5,
-      borderTopColor: "#ddd",
-      backgroundColor: "#fff",
-      margin: 0,
-      backgroundColor: 'grey'
+    alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+     height: 80,
+     paddingHorizontal: 8,
+     paddingBottom: 8,
+     justifyContent: 'space-between'
   }
 })
 

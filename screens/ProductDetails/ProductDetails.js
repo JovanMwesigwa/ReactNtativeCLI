@@ -233,15 +233,15 @@ const { container } = styles
 
                         <View style={styles.profileContainer}>
                             <Image source={{ uri: state.post.author.profile_pic }} style={GlobalStyles.largeRoundedPictContainer} />
-                            <View style={{ alignItems: 'center' }}>
+                            <View style={{ marginLeft: 10 }}>
                               <View style={{ flexDirection: 'row' }}> 
-                                <Text style={{...GlobalStyles.darkHeaderText, fontSize: 15}}>{state.post.author.user.username}</Text>
+                                <Text style={{...GlobalStyles.darkHeaderText, fontSize: 15}}>{state.post.username}</Text>
                                 {
-                                  state.post.author.verified ?  <AntDesign name="star" size={10} color={GlobalStyles.darkFontColor.color} /> : null
+                                  state.post.author.verified &&  <AntDesign name="star" size={10} color={GlobalStyles.darkFontColor.color} />
                                 }
                               
                               </View>
-                              <Text style={{...GlobalStyles.greyTextSmall, fontSize: 13}}>{state.post.author.profile_type.name}</Text>
+                              <Text style={{...GlobalStyles.greyTextSmall, fontSize: 13}}>{state.post.profile_type}</Text>
                             </View>
                         </View>
 
@@ -260,8 +260,14 @@ const { container } = styles
 
                       <View>
                           <AppHeaderText>{state.post.title}</AppHeaderText>
-                          { state.post.price && <AppText color='red' fontWeight='700'>${state.post.price}</AppText> }
-                          {state.post.offer && <AppText color='gold' fontWeight='700'>{state.post.offer} Offer</AppText>}
+                          <View style={styles.costs}>
+                            { state.post.price && 
+                              <AppText {...styles.priceContainer}>Shs {state.post.price}</AppText>
+                            }
+                          {state.post.offer && 
+                            <AppText {...styles.offerContainer}>{state.post.offer} %</AppText>
+                          }
+                          </View>
                       </View>
                     
                     <View  style={styles.likeInfo}>
@@ -312,9 +318,9 @@ const { container } = styles
                   </Dialog>
                 </Portal>
 
-              <View style={{ paddingHorizontal: 15, marginVertical: 8}}>
-                    <AppText fontWeight="700">Description</AppText>
-                    <AppText fontSize={15}>{state.post.description}</AppText>
+              <View style={styles.descriptionStyles}>
+                <View style={styles.lineStyles} />
+                    <AppText fontSize={15} flex={1}>{state.post.description}</AppText>
               </View>
 
           </View>
@@ -345,7 +351,7 @@ const { container } = styles
           navigation.navigate('AddComment', { item: state.post, refreshPost: fastRefresh,  })
             }}>
         <View style={styles.UploadBtn}>
-              <FontAwesome5 name="comment" size={18} color="white" />
+              <FontAwesome5 name="comment" size={20} color="white" />
         </View>
     </TouchableWithoutFeedback>
     </> }
@@ -359,9 +365,20 @@ const styles = StyleSheet.create({
    flex: 1,
    backgroundColor: 'white',
   },
+  costs: {
+    alignItems: 'center', 
+    flexDirection: 'row',
+    marginTop: 5
+  },
   headerFont: {
     fontSize: 15,
     fontWeight: 'bold'
+  },
+  descriptionStyles: { 
+    marginLeft: 15, 
+    marginVertical: 8,
+    flexDirection: 'row',
+    paddingBottom: 8
   },
   imageContainer: {
     flex: 2,
@@ -370,21 +387,35 @@ const styles = StyleSheet.create({
     height: 300
   },
   likeInfo: { paddingHorizontal: 15,  flexDirection: 'row', alignItems: 'center', paddingTop: 5 },
+  lineStyles: {
+     width: 2,
+     backgroundColor: '#cec7c4',
+     marginRight: 15,
+     height: "100%"
+  },
   UploadBtn: {
     alignItems: 'center',
     backgroundColor: GlobalStyles.themeColor.color, 
     borderRadius: 50/2, 
     bottom: 20,
     elevation: 5,
-    height: 50,
+    padding: 15,
     position: 'absolute',
     justifyContent: 'center',
     right: 20,
-    width: 50,
   },
   profileContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+  },
+  priceContainer: {
+    padding: 1,
+    backgroundColor: 'red',
+    color: '#fff',
+    borderRadius: 15,
+    marginRight: 10,
+    paddingHorizontal: 10,
+    fontWeight: '700',
   },
   commentsContainer: {
     flex: 1,
@@ -404,7 +435,7 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
       flex: 1,
-      marginHorizontal: 10
+      marginHorizontal: 15
   },
   secDesContainer: { 
     flex: 1,
@@ -432,6 +463,8 @@ accountContainer: {
   flexDirection: 'row',
   justifyContent: 'space-between', 
   width: "100%",
+  marginVertical: 12,
+  
 },
   topButtons: {
     flexDirection: "row",
@@ -503,6 +536,15 @@ cartStyles: {
     borderRadius: 8,
     marginVertical: 10,
   },
+  offerContainer: {
+    fontWeight:'700',
+    padding: 1,
+    backgroundColor: 'gold',
+    color: '#fff',
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    fontWeight: '700',
+  }
 })
 
 const mapStateToProps = state => {

@@ -1,5 +1,5 @@
 import React, { useEffect} from 'react'
-import { View, Text, StyleSheet, ScrollView,FlatList, TouchableOpacity, ActivityIndicator, StatusBar, RefreshControl, TouchableWithoutFeedback, Button } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, StatusBar, RefreshControl, TouchableWithoutFeedback, Button } from 'react-native'
 import { connect } from 'react-redux'
 import { MaterialCommunityIcons} from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
@@ -7,12 +7,11 @@ import * as Animatable from 'react-native-animatable';
 
 
 
-import { AppButton, ErrorView, GreyTopBar, TopProductCat, ProductCard, MainHeaderComponent} from '../../components/';
+import {  ErrorView, GreyTopBar, TopAccountsComponent, ProductCard, MainHeaderComponent, StoriesComponent, SuggestedProfiles} from '../../components/';
 import { fetchLoadMorePosts, fetchPosts, hotReloadPosts } from '../../redux/posts/postsRedux';
 import { GlobalStyles } from '../../styles/GlobalStyles'
 import { signOut } from '../../redux/auth/authRedux'
 import SplashLoadingScreen from '../SplashLoadingScreen.js/SplashLoadingScreen';
-import useAuthUser from '../../hooks/useAuthUser';
 import useFetchMorePosts from '../../hooks/useFetchMorePosts'
 import useFetchTopProfilesApi from '../../hooks/useFetchTopProfilesApi'
 import { fetchUserProfile } from '../../redux/userProfile/userProfileRedux';
@@ -51,14 +50,13 @@ const Find = ({ navigation, signOut, authToken, posts, fetchHotReload, postsLoad
 
   const getProducts = () => {
     // This function is called by the flatlist {data} and it appends loadmore post on the current post lists in the feed.  
-    const allProducts = [...posts, ...nextPosts.morePosts]
+    const allProducts = [...posts,...nextPosts.morePosts]
     return allProducts;
   }
 
   const reloadPosts = () => {
     fetchHotReload(token)
   }
-
 
   if (postsLoading) return <SplashLoadingScreen />
 
@@ -96,46 +94,23 @@ const Find = ({ navigation, signOut, authToken, posts, fetchHotReload, postsLoad
       />
    
  return( 
-   <>
+   <View style={styles.mainContainer}>
       <StatusBar backgroundColor='#ddd' barStyle='dark-content' />
       <MainHeaderComponent main />
 
       { postsLoading ? 
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
+      
+      <View style={styles.activityIndicatorStyles}>
         <ActivityIndicator size='small' collapsable color={GlobalStyles.themeColor.color} />
       </View>  :
+
         <FlatList 
             ListHeaderComponent ={
               <>  
-                <View style={container}>
-                                   
+
+                <View style={container}>              
                     <GreyTopBar signOut={signOut} onPress={() => fetchPostsData(token)} />
-
-                  <View style={styles.feedContainerTwo}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, }}>
-                    <MaterialCommunityIcons name="trending-up" size={20} color="green" />
-                      <Text style={{...GlobalStyles.headerText, fontSize: 16}}>STORIES</Text>
-                    </View>
-                    <AppButton small text="View All" onPress={() => {
-                      navigation.navigate('Company List', { authUser: userProfile.profile })
-                    }} />
-  
- 
-                  </View> 
-
-                    <View style={styles.topProduct}>
-                      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                      <View style={styles.topStories} />
-                        {topProfiles.map(acc => (
-                          <TouchableWithoutFeedback key={acc.id} >
-                            <View  style={{ paddingHorizontal: 8, paddingVertical: 15}}>
-                              <TopProductCat topBrand={acc} token={token} />
-                            </View>
-                          </TouchableWithoutFeedback>
-                        ))}
-                        
-                      </ScrollView>
-                    </View>
+                    <StoriesComponent data={topProfiles} token={token} userProfile={userProfile} />
                 </View>
                
               </>
@@ -145,10 +120,24 @@ const Find = ({ navigation, signOut, authToken, posts, fetchHotReload, postsLoad
             onEndReached={getMorePosts}
             refreshControl={refreshControl}
             ListFooterComponent={renderFooter}
-            onEndReachedThreshold={1.5}
-            renderItem={({ item }) => (
-              <ProductCard item={item} reloadPosts={reloadPosts} authUserID={userProfile.profile.id} />
-            )}
+            onEndReachedThreshold={1.8}
+            renderItem={({ item, index }) => {
+               
+              return index === 4 ? 
+          <View style={container}>    
+              <SuggestedProfiles secondary data={topProfiles} token={token} userProfile={userProfile} />          
+          </View> : (
+              <>
+                <ProductCard item={item} reloadPosts={reloadPosts} authUserID={userProfile.profile.id} />
+                {
+                  item.id % 9 > 6 &&
+                  <View style={container}>  
+                      <TopAccountsComponent  />
+                  </View>
+                }
+
+              </>
+            )}}
               keyExtractor={(item) => item.id.toString()}
           />
           
@@ -158,11 +147,16 @@ const Find = ({ navigation, signOut, authToken, posts, fetchHotReload, postsLoad
             <MaterialCommunityIcons name="feather" size={25} color="#fff" />
           </View>
         </TouchableWithoutFeedback>
-  </>
+  </View>
   )
 
 }
 const styles = StyleSheet.create({
+  activityIndicatorStyles: { 
+  flex: 1, 
+  justifyContent: 'center', 
+  alignItems: 'center', 
+},
   bookmark: {
     position: "absolute",
     color: "#fff",
@@ -190,14 +184,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     elevation: 2,
   },
-  feedContainerTwo: {
-    paddingTop: 5,
-    paddingHorizontal: 10,
-    backgroundColor: "#fff",
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center', 
-  },
   filterContainer: { 
     padding: 12, 
     backgroundColor: 'white', 
@@ -207,6 +193,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginHorizontal: 32 
   },
+
   loadMoreBtn: {
     flexDirection: 'row', 
     padding: 8, 
@@ -215,6 +202,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center' ,
 },
+mainContainer: { flex: 1, backgroundColor: '#e6e5e5' },
 topBtnContainer: {
     padding: 5, 
     backgroundColor: '#fff', 
@@ -223,15 +211,7 @@ topBtnContainer: {
     marginHorizontal: 5,
     marginVertical: 12 
 },
-topStories: { 
-  alignSelf: 'center',
-  width: 73, 
-  height: 73, 
-  marginLeft: 25,
-  backgroundColor: GlobalStyles.themeColor.color,
-  borderRadius: 73/2,
-  marginRight: 10
-},
+
 headerTextContainer: {
   paddingHorizontal: 15,
   marginBottom: 10,
@@ -257,12 +237,6 @@ input: {
   shadowOpacity: 0.25,
   shadowRadius: 3.84,
   elevation: 5,
-},
-  
-topProduct: {
-    alignItems: 'center',
-    flexDirection: "row",
-    backgroundColor: "white",
 },
   
 logoStyles: { 

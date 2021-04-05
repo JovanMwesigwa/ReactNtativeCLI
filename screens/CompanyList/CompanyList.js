@@ -8,11 +8,11 @@ import {ApploadingComponent, ErrorView, CompanyCard, MainHeaderComponent, } from
 import { UserInfoContext } from '../../context/userInfoContext/UserInfoContextProvider'
 import useAuthUser from '../../hooks/useAuthUser';
 import useFetchData from '../../hooks/useFetchData'
+import { fetchProfiles } from '../../redux/profiles/profilesRedux';
 
 
 
-
-const CompanyList = ({ authToken }) => {
+const CompanyList = ({ authToken, fetchProfiles,nextUrl, profileData,profilesErrors, profilesLoading}) => {
 
     const { userInfo } = useContext(UserInfoContext);
 
@@ -20,39 +20,57 @@ const CompanyList = ({ authToken }) => {
 
     const dataApi = useFetchData(token, `api/profiles/`)
 
+    const moreDataApi = useFetchData(token, dataApi.data.next)
+
     const authUserName = useAuthUser(token)
 
 
 useEffect(() => {
-  dataApi.request()
+  fetchProfiles(token)
 },[])
 
+const getMoreProfiles = () => {
+  moreDataApi.request()
+}
 
+const getProfiles = () => {
+  // This function is called by the flatlist {data} and it appends loadmore profiles on the current post lists in the feed.  
+  const allProfiles = [...profileData]
+  return allProfiles;
+}
+
+console.log(nextUrl)
 
 const name = userInfo.user;
 
-  if(dataApi.loading) return <ApploadingComponent />
+  if(profilesLoading) return <ApploadingComponent />
 
-  if (dataApi.errors) return <ErrorView onPress={() => console.log("Reload list...")} error={dataApi.errors} />
+  if (profilesErrors) return <ErrorView onPress={() => console.log("Reload list...")} error={profilesErrors} />
 
-const refreshControl = <RefreshControl refreshing={dataApi.loading} onRefresh={() => dataApi.request()} />
+const refreshControl = <RefreshControl refreshing={profilesLoading} onRefresh={() => dataApi.request()} />
  return(
-    <View style={styles.container}>
+   <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
-        <MainHeaderComponent />
-        <View style={styles.infoHeader}>
-          <Text style={styles.headerText}>ALL COMPANIES</Text>
-        </View>
-            <FlatList
-                data={dataApi.data.results}
-                showsVerticalScrollIndicator={false}
-                refreshControl={refreshControl}
-                renderItem={({ item }) => (
-                    <CompanyCard item={item} companyName={name} authUserName={authUserName.user} />
-                )}
-                keyExtractor={(item) => item.id.toString()}
-            />
-    </View>
+      <View style={styles.container}>
+          <MainHeaderComponent />
+          
+          <View style={styles.infoHeader}>
+            <Text style={styles.headerText}>ALL COMPANIES</Text>
+          </View>
+
+              <FlatList
+                  data={getProfiles()}
+                  showsVerticalScrollIndicator={false}
+                  onEndReached={getMoreProfiles}
+                  onEndReachedThreshold={1.5}
+                  refreshControl={refreshControl}
+                  renderItem={({ item }) => (
+                      <CompanyCard item={item} authUserName={authUserName} />
+                  )}
+                  keyExtractor={(item) => item.id.toString()}
+              />
+      </View>
+    </>
   )
 }
 
@@ -88,7 +106,16 @@ headerText: {
 
 const mapStateToProps = state => {
   return{
-    authToken: state.auth.token
+    authToken: state.auth.token,
+    profileData: state.profiles.profiles,
+    profilesLoading: state.profiles.loading,
+    profilesErrors: state.profiles.errors,
   }
 }
-export default connect(mapStateToProps)(CompanyList)
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchProfiles: token => dispatch(fetchProfiles(token))
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(CompanyList)

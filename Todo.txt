@@ -20,4 +20,33 @@
     - show the user location to the seller and buyer using google maps API...
 
 
+<Flatlist
+   contentContainerStyle={{ paddingBottom: 50 }}
+   data={data}
+   keyExtractor={item => item.id}
+   renderItem = {({ item }) => {
+      return (
+         <>
+            <Text>{item.name}</Text>
+            {Math.random() < 0.5 && (
+               <RandomComponent>
+               ....
+               </RandomComponent>
+            )}
+         </>
+      )
+   }}
+ />
+
+ OR
+
+ <Flatlist
+   contentContainerStyle={{ paddingBottom: 50 }}
+   data={data}
+   keyExtractor={item => item.id}
+   renderItem = {({ item, index }) => {
+      return index % 5 === 0 ? <CustomComponent /> : <NormalComponent />
+   }}
+ />
+
     

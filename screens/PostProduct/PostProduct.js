@@ -125,7 +125,7 @@ const { container } = styles
               <AppTextInput 
                 placeholder='Any Offer (Optional) '
                 name="offer"
-                icon="money"
+                icon="th-large"
                 keyboardType="number-pad"
               />
 

@@ -21,8 +21,6 @@ const TopProductCat = ({ topBrand, token }) => {
     setShowing(false)
   }
 
-  // () => navigation.navigate('Stories', { item: topBrand, token: token})
-
 
 const { container } = styles
  return(
@@ -46,7 +44,6 @@ const styles = StyleSheet.create({
     width: 73,
     borderRadius: 75/2,
     overflow: 'hidden',
-    elevation: 5,
   },
   outer: {
   

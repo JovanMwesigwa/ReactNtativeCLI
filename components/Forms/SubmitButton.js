@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         padding: 10,
         backgroundColor: GlobalStyles.themeColor.color,
-        borderRadius: 15,
+        borderRadius: 8,
         marginVertical: 18,
       },
     text: { 

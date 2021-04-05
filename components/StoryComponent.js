@@ -14,9 +14,10 @@ const StoryComponent = ({item, onPress, user}) => {
             source={{ uri: item.image }}
             style={{ flex: 1, width: null, height: null, resizeMode: "contain" }}
         />
-            <View style={styles.topCurtain}></View>
-            <View style={styles.topBtns}>
-
+            <View style={styles.headerDark}>
+                
+            </View>
+            <View style={styles.accountContainer}>
                 <View style={styles.header}>
                     <Image source={{ uri: user.profile_pic }} style={styles.userImage} />
                     <View >
@@ -25,10 +26,9 @@ const StoryComponent = ({item, onPress, user}) => {
                     </View>
                 </View>
 
-                <TouchableOpacity style={styles.topBtnContainer}  onPress={onPress} >
-                    <MaterialIcons name="close" size={25} color="#fff" /> 
-                </TouchableOpacity>
-
+                    <TouchableOpacity style={styles.topBtnContainer}  onPress={onPress} >
+                        <MaterialIcons name="close" size={25} color="#fff" /> 
+                    </TouchableOpacity>
             </View>
             <View style={styles.textContainer}>
                 <View style={styles.contentContainer}>
@@ -42,6 +42,19 @@ const StoryComponent = ({item, onPress, user}) => {
 const dimensions = Dimensions.get('screen')
 
 const styles = StyleSheet.create({
+    accountContainer: {
+        alignItems: 'center',
+        position: 'absolute',
+        height: 80,
+        width: '100%',
+        top: 0,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 12,
+        left: 0,
+        right: 0,
+        bottom: 0
+    },
     container: {
         height: dimensions.height,
         width: dimensions.width
@@ -49,39 +62,27 @@ const styles = StyleSheet.create({
     contentContainer: {
         flex: 1,
         padding: 12,
-        opacity: 0.6
+        opacity: 0.8
     },
     topBtnContainer: {
         padding: 15, 
         borderRadius: 64, 
     },
-    topCurtain: {
-        // backgroundColor: 'black',
-        height: 70,
+    header: { 
+        alignItems: 'center', 
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+    headerDark: {
+        height: 80,
+        backgroundColor: 'black',
+        opacity: 0.6,
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
-        opacity: 0.2,
-        width: '100%',
+        width: '100%'
     },
-    topBtns: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        height: 35,
-        position: 'absolute',
-        top: 15,
-        left: 0,
-        right: 0,
-        paddingHorizontal: 15,
-        justifyContent: 'space-between',
-        width: '100%',
-    },
-    header: { 
-        alignItems: 'center', 
-        flexDirection: 'row',
-        justifyContent: 'center'
-},
     userContainer: {
         alignItems: 'center',
         backgroundColor: 'brown',

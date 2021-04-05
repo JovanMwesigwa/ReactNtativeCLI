@@ -15,6 +15,7 @@ import { APIROOTURL } from '../../ApiRootURL/ApiRootUrl'
 import { GlobalStyles } from '../../styles/GlobalStyles'
 import useFetchData from '../../hooks/useFetchData'
 import { fetchOtherUserProfile } from '../../redux/otherUserProfile/otherUserprofilerRedux';
+import GalleryBox from '../../components/GalleryBox';
 
 
 
@@ -32,11 +33,15 @@ const CompanyProfile = ({authToken, route, fetchUserProfile, userProfile }) => {
 
   const topPosts = useFetchData(token, `api/topproducts/${ID}/`)
 
-  const followingData = useFetchData(token, `api/followers/${ID}/`)
+  const followingData = useFetchData(token, `api/following/${ID}/`)
+
+  const followersData = useFetchData(token, `api/followers/${ID}/`)
+  
 
   useEffect(() => {
     fetchUserProfile(token, ID)
      followingData.request()
+     followersData.request()
      topPosts.request()
      fetchFollowData()
   },[])
@@ -52,6 +57,7 @@ const CompanyProfile = ({authToken, route, fetchUserProfile, userProfile }) => {
     .catch(err => {
       console.log(err)
     })
+    followingData.request()
   }
 
   const fetchFollowUser = async () => {
@@ -61,11 +67,12 @@ const CompanyProfile = ({authToken, route, fetchUserProfile, userProfile }) => {
         'Authorization': `Token ${token}`,
       }
     }).then(res => {
-      fastRefresh()
+      followingData.request()
     })
     .catch(err => {
       console.log(err)
     })
+    
   }
 
   const fetchUnFollowUser = async () => {
@@ -75,16 +82,18 @@ const CompanyProfile = ({authToken, route, fetchUserProfile, userProfile }) => {
         'Authorization': `Token ${token}`,
       }
     }).then(res => {
-      fastRefresh()
+      followingData.request()
     })
     .catch(err => {
       console.log(err)
     })
+    
   }
 
 
   const fastRefresh = () => {
     fetchUserProfile(token, ID)
+    followersData.request()
     followingData.request()
     topPosts.request()
     fetchFollowData()
@@ -120,20 +129,20 @@ const refreshControl = <RefreshControl
 
                   <View style={styles.footer}>
 
-                    <View style={{ flex: 1, marginBottom: 6, paddingHorizontal: 20 }} >
+                    <View style={styles.upperContainer} >
 
                       <Image source={{ uri: userProfile.profile.profile_pic }} style={styles.profilephoto} />
                     
-                    <View style={{ flexDirection: 'row', marginTop: 15,  justifyContent: 'space-between' }}>
+                    <View style={styles.accountInfoContainer}>
+
                         <View >
-                          <View style={{ flexDirection: 'row'}}>
+                          <View style={styles.userProfileContainer}>
                             <Text style={{...styles.mainText, fontSize: 15}}>{userProfile.profile.user}</Text>
                             {
                               userProfile.profile.verified ? <AntDesign name="star" size={10} color="black" /> : null
                             }
-                            
                           </View>
-                          <Text style={styles.secondaryText}>{userProfile.profile.profile_type.name}</Text>
+                          <Text style={styles.secondaryText}>{userProfile.profile.profile_type}</Text>
                         </View>
 
                         <View style={styles.actionBtns}>
@@ -165,69 +174,76 @@ const refreshControl = <RefreshControl
                     </View>
 
                     <View style={{ flex: 1, paddingHorizontal: 15 }}>
-                      {
-                        userProfile.profile.working_days !== null &&
-                          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <View style={{ padding: 3, borderRadius: 8, opacity: 0.8 }}>
-                                <Entypo name="calendar" size={18} color="#FF5A09" /> 
-                            </View>
-                            <View style={{ paddingHorizontal: 5}}>
-                              <Text style={{...styles.mainText, fontWeight: '600'}}>{userProfile.profile.working_days}</Text> 
-                              <Text  style={{...styles.secondaryText, fontSize: 13}}>{userProfile.profile.working_hours}</Text> 
-                            </View>
-                          </View>
-                      }
-                        
-                          {
-                            userProfile.profile.location !== null &&
-                          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <View style={{ padding: 3, borderRadius: 8, opacity: 0.8 }}>
-                              <Entypo name="location-pin" size={18} color="#FF5A09" />
-                            </View>
-                            
-                            <View style={{   paddingHorizontal: 5 }}>
-                              <Text style={{...styles.mainText,fontWeight: '600'}}>{userProfile.profile.location}</Text> 
-                            </View>
-                          </View> 
-                          }
 
-                          {
-                            userProfile.profile.contact !== null &&
-                          
-                          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <View style={{ padding: 3, borderRadius: 8, opacity: 0.8 }}>
-                              <Entypo name="globe" size={18} color="#FF5A09" />
-                            </View >
-                              <Text style={{...styles.mainText,fontWeight: '600', color: '#777',  paddingHorizontal: 5}}>{userProfile.profile.contact}</Text> 
-                          </View> 
-                          }
+                            {
+                              userProfile.profile.working_days !== null &&
+
+                                <View style={styles.infoContainer}>
+                                  <View style={styles.iconContainer}>
+                                      <Entypo name="calendar" size={18} color="#FF5A09" /> 
+                                  </View>
+                                  <View style={{ paddingHorizontal: 5}}>
+                                    <Text style={{...styles.mainText, fontWeight: '600'}}>{userProfile.profile.working_days}</Text> 
+                                    <Text  style={{...styles.secondaryText, fontSize: 13}}>{userProfile.profile.working_hours}</Text> 
+                                  </View>
+                                </View>
+                            }
+                        
+                            {
+                              userProfile.profile.location !== null &&
+                              <View style={styles.infoContainer}>
+                                <View style={styles.iconContainer}>
+                                  <Entypo name="location-pin" size={18} color="#FF5A09" />
+                                </View>
+                                
+                                <View style={{   paddingHorizontal: 5 }}>
+                                  <Text style={{...styles.mainText,fontWeight: '600'}}>{userProfile.profile.location}</Text> 
+                                </View>
+                              </View> 
+                            }
+
+                            {
+                              userProfile.profile.contact !== null &&
+                              <View style={styles.infoContainer}>
+                                <View style={styles.iconContainer}>
+                                  <Entypo name="globe" size={18} color="#FF5A09" />
+                                </View >
+                                  <Text style={{...styles.mainText,fontWeight: '600', color: '#777',  paddingHorizontal: 5}}>{userProfile.profile.contact}</Text> 
+                              </View> 
+                            }
                       
                         <View style={styles.section}>
                           <MaterialCommunityIcons name="account-group" size={18} color="#FF5A09" />
-                          <Paragraph style={[styles.paragraph,styles.caption]}>{followingData.data}</Paragraph>
+
+                          {
+                            !followersData.errors &&
+                            <Paragraph style={[styles.paragraph,styles.caption]}>{followersData.loading ? '..' : followersData.data}</Paragraph>
+                          }
+                          <Caption style={{...styles.caption, paddingLeft: 2}}>following</Caption>
+
+
+                          {
+                            !followingData.errors &&
+                            <Paragraph style={[styles.paragraph,styles.caption]}>{followingData.loading ? '..' : followingData.data}</Paragraph>
+                          }
                           <Caption style={{...styles.caption, paddingLeft: 2}}>followers</Caption>
+
                         </View>
                     </View>
 
                 <Tabs 
-                    tabBarUnderlineStyle={{borderBottomWidth:4, borderBottomColor: GlobalStyles.themeColor.color}}
-                    tabContainerStyle={{
-                      elevation: 0,
-                      shadowOpacity: 0,
-                      borderBottomWidth: 1,
-                      borderBottomColor: "#ddd"
-                    }}
+                    tabBarUnderlineStyle={styles.tabBarUnderlineStyle}
+                    tabContainerStyle={styles.tabContainerStyle}
                   >
 
-                <Tab heading="Top Products"
-                 tabStyle={{backgroundColor: 'white'}} 
-                 textStyle={{color: '#777',}} 
-                 activeTabStyle={{backgroundColor: 'white'}} 
-                 activeTextStyle={{color: GlobalStyles.themeColor.color,  fontWeight: '700'}}
+                <Tab 
+                  heading="Top Products"
+                  tabStyle={styles.tabStyle} 
+                  textStyle={styles.tabTextStyle} 
+                  activeTabStyle={styles.activeTabStyle} 
+                  activeTextStyle={styles.activeTextStyle}
                 >
-
-
-                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     
                     {
                       topPosts.data.map(topPost => (
@@ -250,34 +266,33 @@ const refreshControl = <RefreshControl
 
                   </Tab>
 
-                  <Tab heading="About Us" 
-                    tabStyle={{backgroundColor: 'white'}} 
-                    textStyle={{color: '#777'}} 
-
-                    activeTabStyle={{backgroundColor: 'white'}} 
-                    activeTextStyle={{color: GlobalStyles.themeColor.color,  fontWeight: '700'}}
+                  <Tab 
+                    heading="About Us" 
+                    tabStyle={styles.tabStyle} 
+                    textStyle={styles.tabTextStyle} 
+                    activeTabStyle={styles.activeTabStyle} 
+                    activeTextStyle={styles.activeTextStyle}
                   >
                       <View style={{ marginVertical: 8, paddingHorizontal: 20 }}>
                         <View >
-                            <Text style={{...styles.mainText, fontSize: 14.5, letterSpacing: 0.5, lineHeight: 18,  fontWeight: 'normal'}}>{userProfile.profile.description}</Text>
+                            <Text style={styles.descriptionstyles}>{userProfile.profile.description}</Text>
                         </View>
                     </View>
                   </Tab>
 
-                  <Tab heading="Gallery"
-                    tabStyle={{backgroundColor: 'white'}} 
-                    textStyle={{color: '#777'}} 
-                    activeTabStyle={{backgroundColor: 'white'}} 
-                    activeTextStyle={{color: GlobalStyles.themeColor.color, fontWeight: '700'}}
+                  <Tab 
+                    heading="Gallery"
+                    tabStyle={styles.tabStyle} 
+                    textStyle={styles.tabTextStyle} 
+                    activeTabStyle={styles.activeTabStyle} 
+                    activeTextStyle={styles.activeTextStyle}
                   >
 
-                    <View style={{ padding: 2, flexDirection: 'row', flexWrap: 'wrap' }}>
-                        <View style={{ backgroundColor: 'grey', width: 113, height: 100, margin: 2 }} />
-                        <View style={{ backgroundColor: 'brown', width: 113, height: 100, margin: 2 }} />
-                        <View style={{ backgroundColor: 'black', width: 113, height: 100, margin: 2 }} />
-                        <View style={{ backgroundColor: 'black', width: 113, height: 100, margin: 2 }} />
-                        <View style={{ backgroundColor: 'black', width: 113, height: 100, margin: 2 }} />
-                        <View style={{ backgroundColor: 'black', width: 113, height: 100, margin: 2 }} />
+                    <View style={styles.galleryContainer}>
+                        <GalleryBox />
+                        <GalleryBox />
+                        <GalleryBox />
+                        <GalleryBox />
 
                     </View>
 
@@ -306,6 +321,18 @@ const refreshControl = <RefreshControl
 }
 
 const styles = StyleSheet.create({
+  accountInfoContainer: { 
+    flexDirection: 'row', 
+    marginTop: 15,  
+    justifyContent: 'space-between' 
+  },
+  activeTabStyle: {
+    backgroundColor: 'white'
+  },
+  activeTextStyle: {
+    color: GlobalStyles.themeColor.color, 
+    fontWeight: '700'
+  },
   actionBtns: { 
     flexDirection: 'row', 
     position: 'absolute',
@@ -321,6 +348,13 @@ const styles = StyleSheet.create({
   description: {
     flex: 1
   },
+  descriptionstyles: {
+    fontSize: 14.5, 
+    letterSpacing: 0.5, 
+    lineHeight: 18,  
+    fontWeight: 'normal'
+  },
+  galleryContainer: { padding: 2, flexDirection: 'row', flexWrap: 'wrap' },
   footer: { 
     flex: 1, 
     backgroundColor: 'white', 
@@ -341,7 +375,7 @@ followBtnContainer: {
   borderColor: GlobalStyles.themeColor.color,
   paddingHorizontal: 15,
   paddingVertical: 6, 
-  borderRadius: 15
+  borderRadius: 25
 },
 followingBtnContainer:{
   alignItems: 'center',
@@ -351,7 +385,7 @@ followingBtnContainer:{
   backgroundColor: GlobalStyles.themeColor.color, 
   paddingHorizontal: 15,
   paddingVertical: 8,
-  borderRadius: 15
+  borderRadius: 25
 },
 footerStyles: { 
   alignItems: 'center',  
@@ -401,6 +435,16 @@ loadMoreBtn: {
   justifyContent: 'center',
   alignItems: 'center' 
 },
+tabBarUnderlineStyle: {
+  borderBottomWidth:4, 
+  borderBottomColor: GlobalStyles.themeColor.color
+},
+tabContainerStyle: {
+  elevation: 0,
+  shadowOpacity: 0,
+  borderBottomWidth: 1,
+  borderBottomColor: "#ddd"
+},
   topText: {
     paddingRight: 12,
     backgroundColor: 'grey',
@@ -411,6 +455,12 @@ loadMoreBtn: {
     fontWeight: '500',
     lineHeight: 18, 
     letterSpacing: 0.3,
+  },
+  tabStyle: {
+    backgroundColor: 'white'
+  },
+  tabTextStyle: {
+    color: '#777'
   },
   msgBookmark:{
     color: "#fff",
@@ -490,6 +540,8 @@ loadMoreBtn: {
     borderTopWidth: 0.5,
     borderTopColor: "#ddd"
   },
+  infoContainer: { flexDirection: 'row', alignItems: 'center' },
+  iconContainer: { padding: 3, borderRadius: 8, opacity: 0.8 },
   locationContainer: {
     flex: 1,
     backgroundColor: 'white',
@@ -508,7 +560,12 @@ loadMoreBtn: {
     elevation: 1,
     width: '100%'
   },
-
+  upperContainer: { 
+    flex: 1, 
+    marginBottom: 6, 
+    paddingHorizontal: 20 
+  },
+  userProfileContainer: { flexDirection: 'row'}
 })
 
 const mapStateToProps = state => {

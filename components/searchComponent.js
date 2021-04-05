@@ -1,37 +1,26 @@
-import React, { useContext, useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
-import axios from 'axios'
-import { MaterialIcons, AntDesign } from '@expo/vector-icons';
-import { GlobalStyles  } from '../styles/GlobalStyles'
-import { useNavigation } from '@react-navigation/native';
-import { APIROOTURL } from '../ApiRootURL/ApiRootUrl'
-import { AuthContext } from '../context/authentication/Context'
+import React from 'react'
+import { View,  StyleSheet,TouchableWithoutFeedback } from 'react-native'
+import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native'
+
+
+
+import { AppText } from '.'
+
 
 const SearchComponent = () => {
 
-    const navigation = useNavigation();
-
-    const [ enteredText, setEnteredText ] = useState(null);
-
-    const { authState } = useContext(AuthContext);
-
-    const token = authState.token;
-
+  const navigation  = useNavigation()
 
 const { container } = styles
  return(
   <View style={container}>
-    <TextInput
-        placeholder="Search for product...."
-        style={styles.input}
-        value={enteredText}
-        onChangeText={text => setEnteredText(text)}
-    />
-      <TouchableOpacity style={styles.icon}
-        
-      >
-        <MaterialIcons name="search" size={18} color={GlobalStyles.themeColor.color} />
-      </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={() => navigation.navigate('Search')}>
+      <View style={styles.input}>
+          <MaterialIcons name="search" size={18} color="#827e7e" style={styles.icon} />
+          <AppText {...styles.placeholderText}>Search for any product...</AppText>
+      </View>
+    </TouchableWithoutFeedback>
   </View>
   )
 }
@@ -45,19 +34,21 @@ const styles = StyleSheet.create({
       padding: 20
   },
   icon: {
-    position: 'absolute',
-    bottom: 5.5,
-    left: 22
+
+  },
+  placeholderText: {
+    color: "#827e7e",
+    fontSize: 14,
+    marginLeft: 12
   },
   input: {
-    borderWidth: 0.3,
-    borderColor: GlobalStyles.darkFontColor.color,
-    borderRadius: 15,
-    padding: 2,
-    marginHorizontal: 15,
-    width: "90%",
-    paddingHorizontal: 28,
     alignItems: 'center',
+    backgroundColor: '#e6e5e5',
+    borderRadius: 5,
+    flexDirection: 'row',
+    padding: 8,
+    marginHorizontal: 15,
+    width: "100%",
 },
 })
 export default SearchComponent;

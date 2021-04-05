@@ -1,13 +1,12 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
-import { GlobalStyles } from '../styles/GlobalStyles'
-// import { useNavigation } from '@react-navigation/native';
+
+
 
 
 const PostProductHeader = ({submitHandler, onPress}) => {
 
-    // const navigation = useNavigation();
 
 const { container } = styles
  return(

@@ -16,6 +16,7 @@ export { default as ProductDetails } from './ProductDetails/ProductDetails'
 export { default as PostProduct } from './PostProduct/PostProduct'
 export { default as ProductEdit } from './ProductEdit/ProductEdit'
 export { default as SearchResults } from './SearchResults/SearchResults'
+export { default as SearchScreen } from './SearchScreeen/SearchScreen'
 export { default as SettingsComponent } from './Settings/SettingsComponent'
 export { default as Stories } from './Stories/Stories'
 export { default as SplashLoadingScreen } from './SplashLoadingScreen.js/SplashLoadingScreen';

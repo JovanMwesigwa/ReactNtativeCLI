@@ -34,8 +34,6 @@ const ProductCard = ({authToken, authUserID, addToCartFunc, removeCartItemFunc, 
   const [ fullImageModal, setFullImageModal ] = useState(false);
   
   const { userInfo } = useContext(UserInfoContext);
-
-  // console.log("ID===========>",authUserID)
   
   const token = authToken
 
@@ -103,8 +101,6 @@ const ProductCard = ({authToken, authUserID, addToCartFunc, removeCartItemFunc, 
     removeCartItemFunc(token, item.id)
   }
 
-  // console.log(item.author.verified)
-
   
 const { container } = styles
 
@@ -121,8 +117,8 @@ const { container } = styles
           {
             authUserID !== item.author.id ?
               <TouchableOpacity onPress = {() => navigation.navigate("CompanyProfile", {ID: item.author.id})}>
-              <Image source={{ uri: item.author.profile_pic }} style={GlobalStyles.smallRoundedPictContainer} />
-            </TouchableOpacity> :
+                <Image source={{ uri: item.author.profile_pic }} style={GlobalStyles.smallRoundedPictContainer} />
+              </TouchableOpacity> :
             <TouchableOpacity onPress = {() => navigation.navigate("Profile", {ID: item.author.id})}>
               <Image source={{ uri: item.author.profile_pic }} style={GlobalStyles.smallRoundedPictContainer} />
             </TouchableOpacity>
@@ -137,7 +133,7 @@ const { container } = styles
                   }
                 </View> :
                 <TouchableOpacity style={{ flexDirection: 'row' }} onPress = {() => navigation.navigate("Profile" )}>
-                  <Text style={GlobalStyles.darkHeaderText}>{item.author.user.username}</Text>
+                  <Text style={GlobalStyles.darkHeaderText}>{item.author_name}</Text>
                   {
                     item.author.verified && <AntDesign name="star" size={10} color={GlobalStyles.darkFontColor.color} /> 
                   }
@@ -148,7 +144,7 @@ const { container } = styles
                 <View style={styles.ratingsContainer}>
                   <View style={{ flexDirection: 'row'}}>
                     <MaterialCommunityIcons name="gamepad-circle" size={15} color={GlobalStyles.greenColor.color} />
-                    <Text style={{ color: GlobalStyles.greenColor.color, fontSize: 12, marginLeft: 4 }}>{item.category.name}</Text>
+                    <Text style={{ color: GlobalStyles.greenColor.color, fontSize: 12, marginLeft: 4 }}>{item.category}</Text>
                   </View>
                       <Text style={[GlobalStyles.greyTextSmall, {fontSize: 12}]}>/ Posted about { moment(item.created).startOf('hour').fromNow()}</Text>
                 </View>
@@ -182,8 +178,8 @@ const { container } = styles
           </View>
 
             <View style={{ flexDirection: "row",alignItems: "center", paddingBottom: 12 }}>
-              {item.price && <Text style={styles.priceText}>$ {item.price}</Text>}
-              {item.offer && <Text style={{ fontSize: 13,color: '#2C3335', fontWeight: "bold", color: "gold",  }}>  <Text style={{ color: '#777' }}>•</Text>  {item.offer}%  <Text style={{color: '#777', fontSize: 11}}>Off</Text></Text>}
+              {item.price && <Text style={styles.priceText}>Shs {item.price}</Text>}
+              {item.offer && <Text style={styles.offerStyles}>  <Text style={{ color: '#777' }}>•</Text>  {item.offer}%  <Text style={{color: '#777', fontSize: 15}}>Off</Text></Text>}
             </View>
         </View>
       </View>
@@ -207,7 +203,7 @@ const { container } = styles
         {item.image && 
         <TouchableWithoutFeedback onPress={() => setFullImageModal(true)}>
           <BlurView intensity={100}>
-            <Image source={{uri: item.image }} style={{  width: "100%", height: 300, resizeMode: 'cover'}} />
+            <Image source={{uri: item.image }} style={styles.productImageStyles} />
           </BlurView>
         </TouchableWithoutFeedback> 
         }
@@ -337,6 +333,11 @@ const styles = StyleSheet.create({
     color: "#777",
     letterSpacing: 0.5
   },
+  productImageStyles: {  
+    width: "100%",
+    aspectRatio: 3 / 2, 
+    resizeMode: 'cover'
+  },
   modalText: {
     fontSize: 19,
     fontWeight: '600',
@@ -348,9 +349,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     borderColor: '#B83227',
   },
+  offerStyles: { 
+    fontSize: 16,
+    color: '#2C3335', 
+    fontWeight: "bold", 
+    color: "gold",  
+  },
   priceText: {
-    fontSize: 13,
+    fontSize: 16,
     color: "red",
+    // textDecorationLine: 'underline',
     fontWeight: 'bold'
   },
   ratingsContainer: {

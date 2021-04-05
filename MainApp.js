@@ -6,6 +6,7 @@ import { GlobalStyles } from './styles/GlobalStyles'
 import { connect } from 'react-redux'
 import { load } from './redux/auth/authRedux';
 import NetInfo, { useNetInfo } from '@react-native-community/netinfo';
+import { MainHeaderComponent } from './components'
 
 
 

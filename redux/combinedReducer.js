@@ -4,6 +4,7 @@ import cartReducer from './cart/CartRedux';
 import otherUserProfileReducer from './otherUserProfile/otherUserprofilerRedux';
 import postReducer from './posts/postsRedux'
 import profileReducer from './userProfile/userProfileRedux'
+import profilesReducer from './profiles/profilesRedux'
 
 const combinedReducer = combineReducers({
     auth: authReducer,
@@ -11,6 +12,7 @@ const combinedReducer = combineReducers({
     posts: postReducer,
     userProfile: profileReducer,
     otherUserProfile: otherUserProfileReducer,
+    profiles: profilesReducer
 });
 
 export default combinedReducer;
